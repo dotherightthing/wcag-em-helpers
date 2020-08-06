@@ -1,0 +1,25 @@
+{
+  "name": "WCAG EM Helpers",
+  "version": "1.0.0",
+  "description": "Adds helpers to the online WCAG EM report tool.",
+  "manifest_version": 2,
+  "author": "Dan Smith",
+  "background": {
+    "scripts": [
+      "background.js"],
+    "persistent": false
+  },
+  "permissions": [
+    "activeTab"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://www.w3.org/WAI/eval/report-tool/*"],
+      "run_at": "document_end",
+      "js": [
+        "contentScript.js"
+      ],
+      "css": ["myStyles.css"]
+    }
+  ]
+}

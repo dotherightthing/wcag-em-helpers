@@ -1,0 +1,31 @@
+{
+  "name": "wcag-em-helpers",
+  "version": "1.0.0",
+  "description": "Google Chrome extension which supplements the WCAG EM reporting tool.",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dotherightthing/wcag-em-helpers.git"
+  },
+  "keywords": [
+    "chrome",
+    "extension",
+    "WCAG EM",
+    "accessibility",
+    "audit"
+  ],
+  "author": "dan@dotherightthing.co.nz",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dotherightthing/wcag-em-helpers/issues"
+  },
+  "homepage": "https://github.com/dotherightthing/wcag-em-helpers#readme",
+  "dependencies": {},
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-plugin-jsdoc": "^20.3.0"
+  }
+}
