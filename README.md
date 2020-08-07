@@ -17,10 +17,3 @@ Google Chrome extension which supplements the WCAG EM reporting tool.
 1. <chrome://extensions>
 1. Check *Developer mode*
 1. Click *Load unpacked extension*
-
-## Roadmap
-
-- Expand individual sample results when a sample page is checked (currently this requires navigating to another step then back again)
-- Add WCAG version to each criterium (WCAG 1/2.0/2.1)
-- Add field to describe testing method
-- Consider using `aria-live` to expose new totals
