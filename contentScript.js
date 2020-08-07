@@ -96,7 +96,7 @@ const WcagEmHelpers = (function () {
         count = sc.length;
       }
 
-      html += `<li class="wcag-em-helpers__count wcag-em-helpers__count--${status}"><span class="wcag-em-helpers__count-inner"><span class="wcag-em-helpers__count-int" id="wcag-em-helpers__${status}-count">${count}</span> ${statusMsg}</span></span></li>`;
+      html += `<li class="wcag-em-helpers__count wcag-em-helpers__count--${status}"><span class="wcag-em-helpers__count-inner"><strong class="wcag-em-helpers__count-int" id="wcag-em-helpers__${status}-count">${count}</strong> ${statusMsg}</span></span></li>`;
     });
 
     html += '</ul>';
