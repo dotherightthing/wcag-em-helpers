@@ -1,7 +1,7 @@
 {
   "name": "WCAG EM Helpers",
   "version": "1.0.0",
-  "description": "Adds helpers to the online WCAG EM report tool.",
+  "description": "Supplements the WCAG EM reporting tool.",
   "manifest_version": 2,
   "author": "Dan Smith",
   "background": {
