@@ -346,6 +346,7 @@ const WcagEmHelpers = (function () {
 
       if (classChange === true) {
         _expandIndividualSampleResults();
+        _expandTextAreas();
         
         // stop observing
         observer.disconnect();
