@@ -169,6 +169,7 @@ const WcagEmHelpers = (function () {
       _hostColoursToVariables();
       _updateCriteriaStats('.criterion', '[ng-controller="AuditCriteriaCtrl"]');
       _watchForCriteriaUpdates('.criterion', '[ng-controller="AuditCriteriaCtrl"]');
+      _watchForSampleUpdates('.ng-not-empty', '[ng-controller="AuditSamplePagesCtrl"]');
     }, 1000);
   };
 
@@ -227,6 +228,7 @@ const WcagEmHelpers = (function () {
 
     const callback = function(mutationsList) {
       let classChange = false;
+      let classRegx = new RegExp(criterionSelector.substring(1));
 
       mutationsList.some(function (mutationsListItem) {
         let mutationRecord = mutationsListItem;
@@ -236,13 +238,12 @@ const WcagEmHelpers = (function () {
             let target = mutationRecord.target;
             let tag = target.tagName;
             let attr = mutationRecord.attributeName;
-            let classRegx = new RegExp(criterionSelector.substring(1));
 
             if ((tag === 'DIV') && (attr === 'class')) {
               if (target.className.match(classRegx)) {
                 classChange = true;
 
-                return classChange; // break loop
+                return classChange; // continue (false) or break (true) loop
               }
             }
           }
@@ -266,6 +267,77 @@ const WcagEmHelpers = (function () {
     // Later, you can stop observing
     // observer.disconnect();
   };
+
+  /**
+   * @function watchForSampleUpdates
+   * @summary When Angular updates the sample selection, expand the sample results.
+   * @memberof WcagEmHelpers
+   * @protected
+   *
+   * @param {string} sampleSelectionSelector - Selector applied when a sample selection is made
+   * @param {string} sampleControlContainerSelector - Selector of sample control container
+   */
+  const _watchForSampleUpdates = (sampleSelectionSelector, sampleControlContainerSelector) => {
+    // The mutations to observe
+    // https://stackoverflow.com/a/40195712/6850747
+
+    // innerHTML
+    // const config = { characterData: true, attributes: false, childList: false, subtree: true };
+
+    // textContent
+    // const config = { characterData: false, attributes: false, childList: true, subtree: false };
+
+    let observer;
+
+    const config = {
+      attributes: true,
+      attributesFilter: ['class'],
+      characterData: false,
+      childList: false,
+      subtree: true,
+    };
+
+    const callback = function (mutationsList) {
+      let classChange = false;
+      let classRegx = new RegExp(sampleSelectionSelector.substring(1));
+
+      mutationsList.some(function (mutationsListItem) {
+        let mutationRecord = mutationsListItem;
+
+        if (typeof mutationRecord !== 'undefined') {
+          if (mutationRecord.type === 'attributes') {
+            let target = mutationRecord.target;
+            let tag = target.tagName;
+            let attr = mutationRecord.attributeName;
+
+            if ((tag === 'INPUT') && (attr === 'class')) {
+              if (target.className.match(classRegx)) {
+                classChange = true;
+              }
+
+              return classChange; // continue (false) or break (true) loop
+            }
+          }
+        }
+      });
+
+      if (classChange === true) {
+        _expandIndividualSampleResults();
+        
+        // stop observing
+        observer.disconnect();
+      }
+    };
+
+    // The node that will be observed for mutations
+    const targetNode = document.querySelector(sampleControlContainerSelector);
+
+    // Create an observer instance with a callback function
+    observer = new MutationObserver(callback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(targetNode, config);
+  }
 
   /**
    * @function init
