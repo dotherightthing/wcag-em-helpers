@@ -104,13 +104,31 @@ const WcagEmHelpers = (function () {
     wcagEmHelpersContainer.innerHTML = html;
 
     sc.forEach((scItem, i) => {
-      let countEl = document.createElement('span');
-      countEl.setAttribute('class', 'wcag-em-helpers__title-count');
-      countEl.innerHTML = `[${i + 1}/${sc.length}]`;
-
-      let parentEl = scItem.querySelector('.criterion-title > strong');
-      parentEl.appendChild(countEl);
+      _setCriterionIndex(scItem, i + 1, sc.length);
     });
+  };
+
+  /**
+   * @function _setCriterionIndex
+   * @summary Add index (n/total) to each relevant criterion, to track progress.
+   * @memberof WcagEmHelpers
+   * @protected
+   *
+   * @param {object} domNode - DOM Node
+   * @param {number} index - Index
+   * @param {number} total - Tootal
+   */
+  const _setCriterionIndex = (domNode, index, total) => {
+    const countSelector = '.wcag-em-helpers__title-count';
+    const parentEl = domNode.querySelector('.criterion-title > strong');
+
+    if (parentEl.querySelector(countSelector) === null) {
+      const countEl = document.createElement('span');
+      countEl.setAttribute('class', countSelector.substring(1));
+      parentEl.appendChild(countEl);
+    }
+
+    parentEl.querySelector(countSelector).innerHTML = `[${index}/${total}]`;
   };
 
   /**
@@ -185,6 +203,7 @@ const WcagEmHelpers = (function () {
   const _updateCriteriaStats = (criterionSelector, scContainerSelector) => {
     const statuses = ['total', 'untested', 'passed', 'failed', 'inapplicable', 'canttell'];
     const scContainerElement = document.querySelector(scContainerSelector);
+    const sc = document.querySelectorAll(`${scContainerSelector} ${criterionSelector}`);
 
     statuses.forEach((status) => {
       let count;
@@ -196,6 +215,10 @@ const WcagEmHelpers = (function () {
       }
 
       document.querySelector(`#wcag-em-helpers__${status}-count`).innerHTML = count;
+    });
+
+    sc.forEach((scItem, i) => {
+      _setCriterionIndex(scItem, i + 1, sc.length);
     });
   };
 
