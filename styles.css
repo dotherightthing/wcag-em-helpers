@@ -1,0 +1,63 @@
+.wcag-em-helpers {
+    padding: .5em 0 0;
+}
+
+.wcag-em-helpers p {
+    margin: 0;
+}
+
+.wcag-em-helpers__count {
+    display: inline-block;
+    padding: 0 0 0 .125em; /* border */
+    margin-right: .25em;
+}
+
+.wcag-em-helpers__count--canttell {
+    background-color: var(--color-canttell);
+}
+
+.wcag-em-helpers__count--failed {
+    background-color: var(--color-failed);
+}
+
+.wcag-em-helpers__count--inapplicable {
+    background-color: var(--color-inapplicable);
+}
+
+.wcag-em-helpers__count--passed {
+    background-color: var(--color-passed);
+}
+
+.wcag-em-helpers__count--total {
+    background-color: #000;
+    color: #fff;
+}
+
+.wcag-em-helpers__count--untested {
+    background-color: var(--color-untested);
+}
+
+.wcag-em-helpers__count-inner {
+    display: inline-block;
+    background-color: rgba(255, 255, 255, .3);
+    padding: .125em .4em; /* gutter */
+}
+
+.wcag-em-helpers__counts,
+.wcag-em-helpers__showing {
+    padding: 0;
+    margin: 0;
+}
+
+.wcag-em-helpers__hidden {
+    display: none;
+}
+
+.wcag-em-helpers__title-count {
+    display: inline-block;
+    margin-left: .25em;
+}
+
+.wcag-em-helpers p.wcag-em-helpers__showing {
+    margin-bottom: .25em;
+}

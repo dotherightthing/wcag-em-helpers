@@ -6,7 +6,8 @@
   "author": "Dan Smith",
   "background": {
     "scripts": [
-      "background.js"],
+      "background.js"
+    ],
     "persistent": false
   },
   "permissions": [
@@ -19,7 +20,9 @@
       "js": [
         "contentScript.js"
       ],
-      "css": ["myStyles.css"]
+      "css": [
+        "styles.css"
+      ]
     }
   ]
 }

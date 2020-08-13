@@ -6,23 +6,23 @@
 /**
  * @class WcagEmHelpers
  *
- * @param {object}  options                              - Module options
- * @param {boolean} options.autoExpandSampleResults      - Automatically expand sample results (if samples are selected)
- * @param {boolean} options.autoExpandTextAreas          - Automatically expand textareas (if textareas are populated)
- * @param {string}  options.componentSelectorBase        - Base of helper selector
- * @param {string}  options.criteriaExpandButtonSelector - Selector of button which opens criteria panels
- * @param {Array}   options.criteriaIndicesWcag21        - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
- * @param {string}  options.criterionSelector            - Selector of success criteria elements
- * @param {string}  options.criterionTitleSelector       - Selector of success criterion title element
- * @param {string}  options.criterionTitleIndexSelector  - Selector of success criterion title index element
+ * @param {object}  options                                 - Module options
+ * @param {boolean} options.autoExpandSampleResults         - Automatically expand sample results when samples are selected, note that this adds a delay to the interaction
+ * @param {boolean} options.autoExpandTextAreas             - Automatically expand textareas (if textareas are populated)
+ * @param {string}  options.componentSelectorBase           - Base of helper selector
+ * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
+ * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
+ * @param {string}  options.criterionSelector               - Selector of success criteria elements
+ * @param {string}  options.criterionTitleSelector          - Selector of success criterion title element
+ * @param {string}  options.criterionTitleIndexSelector     - Selector of success criterion title index element
  * @param {string}  options.sampleControlContainerSelector - Selector of container wrapping sample page checkboxes
- * @param {string}  options.sampleExpandButtonSelector   - Selector of button which opens sample panels
- * @param {string}  options.samplesSelectedSelector      - Selector of extra checkbox which Angular checks when a sample page is selected
- * @param {string}  options.sampleSelectionSelector      - Selector of checked sample page checkbox
- * @param {string}  options.scContainerSelector          - Selector of success criteria container
- * @param {string}  options.statsParentSelector          - Selector of element to append the stats after
- * @param {Array}   options.statuses                     - Status state strings
- * @param {string}  options.textareaSelector             - Selector of element which explanations are entered into
+ * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
+ * @param {string}  options.samplesSelectedSelector         - Selector of extra checkbox which Angular checks when a sample page is selected
+ * @param {string}  options.sampleSelectionSelector         - Selector of checked sample page checkbox
+ * @param {string}  options.scContainerSelector             - Selector of success criteria container
+ * @param {string}  options.statsParentSelector             - Selector of element to append the stats after
+ * @param {Array}   options.statuses                        - Status state strings
+ * @param {string}  options.textareaSelector                - Selector of element which explanations are entered into
  */
 class WcagEmHelpers {
     constructor(options = {}) {

@@ -1,12 +1,12 @@
 {
-  "env": {
-    "browser": true,
-    "es6": true
-  },
-  "plugins": [
-    "jsdoc"
-  ],
-  "extends": [
-    "plugin:jsdoc/recommended"
-  ]
+    "env": {
+        "browser": true,
+        "es6": true
+    },
+    "plugins": [
+        "jsdoc"
+    ],
+    "extends": [
+        "plugin:jsdoc/recommended"
+    ]
 }
