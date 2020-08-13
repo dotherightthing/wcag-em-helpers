@@ -116,7 +116,7 @@ const WcagEmHelpers = (function () {
    *
    * @param {object} domNode - DOM Node
    * @param {number} index - Index
-   * @param {number} total - Tootal
+   * @param {number} total - Total
    */
   const _setCriterionIndex = (domNode, index, total) => {
     const countSelector = '.wcag-em-helpers__title-count';
