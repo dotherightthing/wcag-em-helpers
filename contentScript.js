@@ -153,6 +153,8 @@ const WcagEmHelpers = (function () {
       let newCriterionTitle;
 
       // array generated through manual inspection of WCAG EM filter output
+      // WCAG 2.0 succeeds Web Content Accessibility Guidelines 1.0
+      // WCAG 2.1 extends Web Content Accessibility Guidelines 2.0
       const criteriaIndicesWcag21 = [
         '1.3.4',
         '1.3.5',
