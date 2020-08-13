@@ -20,14 +20,10 @@ Google Chrome extension which (unofficially) supplements the WCAG EM reporting t
 ### Expands panels
 
 * Automatically expands all success criteria, so that results for the entire sample can be seen at a glance.
-* Automatically expands individual sample results, so that page specific results can be seen at a glance.
-* Automatically expands populated textareas, so that observations can be seen at a glance.
+* Provides option to automatically expand individual sample results, so that page specific results can be seen at a glance.
+* Provides option to automatically expand populated textareas, so that observations can be seen at a glance.
 
 ![Screenshot of expanded panel and textarea](/images/screenshots/expanded-panel-and-textarea.png)
-
-## manifest.json
-
-* Available permissions - <https://developer.chrome.com/extensions/declare_permissions>
 
 ## Using the extension
 
