@@ -122,13 +122,17 @@ const WcagEmHelpers = (function () {
     const countSelector = '.wcag-em-helpers__title-count';
     const parentEl = domNode.querySelector('.criterion-title > strong');
 
-    if (parentEl.querySelector(countSelector) === null) {
-      const countEl = document.createElement('span');
-      countEl.setAttribute('class', countSelector.substring(1));
-      parentEl.appendChild(countEl);
-    }
+    if (parentEl !== null) {
+      if (parentEl.querySelector(countSelector) === null) {
+        const countEl = document.createElement('span');
+        countEl.setAttribute('class', countSelector.substring(1));
+        parentEl.appendChild(countEl);
+      }
 
-    parentEl.querySelector(countSelector).innerHTML = `[${index}/${total}]`;
+      parentEl.querySelector(countSelector).innerHTML = `[${index}/${total}]`;
+    }
+  };
+
   };
 
   /**
