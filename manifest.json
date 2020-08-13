@@ -1,6 +1,6 @@
 {
   "name": "WCAG EM Helpers",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Supplements the WCAG EM reporting tool.",
   "manifest_version": 2,
   "author": "Dan Smith",
@@ -11,7 +11,8 @@
     "persistent": false
   },
   "permissions": [
-    "activeTab"
+    "activeTab",
+    "storage"
   ],
   "content_scripts": [
     {
@@ -24,5 +25,9 @@
         "styles.css"
       ]
     }
-  ]
+  ],
+  "options_ui": {
+    "page": "options.html",
+    "open_in_tab": false
+  }
 }

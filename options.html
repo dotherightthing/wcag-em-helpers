@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-nz">
+    <head>
+        <title>WCAG EM Helpers Options</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body class="wcag-em-helpers-options">
+        <fieldset class="wcag-em-helpers-options__options">
+            <legend class="wcag-em-helpers-options__legend">Options</legend>
+            <div class="wcag-em-helpers-options__option">
+                <label for="auto-expand-sample-results">Automatically expand selected sample results</label>
+                <input type="checkbox" id="auto-expand-sample-results" aria-describedby="auto-expand-sample-results-description" />
+                <p class="wcag-em-helpers-options__tip" id="auto-expand-sample-results-description">Note: this adds a delay to the interaction</p>
+            </div>
+            <div class="wcag-em-helpers-options__option">
+                <label for="auto-expand-textareas">Automatically expand textareas</label>
+                <input type="checkbox" id="auto-expand-textareas" aria-describedby="auto-expand-textareas-description" />
+                <p class="wcag-em-helpers-options__tip" id="auto-expand-textareas-description">Note: only populated textareas will be expanded</p>
+            </div>
+        </fieldset>
+        <div class="wcag-em-helpers-options__status" role="region" aria-live="polite" id="status"></div>
+        <button class="wcag-em-helpers-options__submit" type="button" id="save">Save</button>
+        <script src="options.js"></script>
+    </body>
+</html>

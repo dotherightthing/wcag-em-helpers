@@ -61,3 +61,42 @@
 .wcag-em-helpers p.wcag-em-helpers__showing {
     margin-bottom: .25em;
 }
+
+.wcag-em-helpers-options {
+    padding: 20px; /* match modal header */
+    margin: 0;
+}
+
+.wcag-em-helpers-options__options {
+    padding: 0;
+    border: 0;
+    margin: 0;
+}
+
+.wcag-em-helpers-options__legend {
+    font-size: 1.2em;
+    font-weight: bold;
+    padding-bottom: .5em;
+}
+
+.wcag-em-helpers-options__option {
+    border-top: 1px solid #ccc;
+    font-size: 1.2em;
+    margin-top: .5em;
+    padding-top: .5em;
+}
+
+.wcag-em-helpers-options__tip {
+    font-size: .9em;
+}
+
+.wcag-em-helpers-options__status {
+    box-sizing: border-box;
+    min-height: 3em;
+    font-size: 1em;
+    margin-bottom: .5em;
+}
+
+.wcag-em-helpers-options__submit {
+    font-size: 1.2em;
+}

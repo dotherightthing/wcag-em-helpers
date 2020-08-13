@@ -7,8 +7,6 @@
  * @class WcagEmHelpers
  *
  * @param {object}  options                                 - Module options
- * @param {boolean} options.autoExpandSampleResults         - Automatically expand sample results when samples are selected, note that this adds a delay to the interaction
- * @param {boolean} options.autoExpandTextAreas             - Automatically expand textareas (if textareas are populated)
  * @param {string}  options.componentSelectorBase           - Base of helper selector
  * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
  * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
@@ -27,8 +25,6 @@
 class WcagEmHelpers {
     constructor(options = {}) {
         // public options
-        this.autoExpandSampleResults = options.autoExpandSampleResults || false;
-        this.autoExpandTextAreas = options.autoExpandTextAreas || false;
         this.componentSelectorBase = options.componentSelectorBase || '';
         this.criteriaExpandButtonSelector = options.criteriaExpandButtonSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
@@ -241,17 +237,23 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     setup() {
-        // timeout allows for Angular render time
-        setTimeout(() => {
-            this.generateCriteriaStats();
-            this.expandCriteria();
-            this.expandSampleResults();
-            this.expandTextAreas();
-            this.hostColoursToVariables();
-            this.updateCriteriaStats();
-            this.watchForCriteriaUpdates();
-            this.watchForSampleUpdates();
-        }, 1000);
+        // get extension options
+        chrome.storage.sync.get(null, (items) => {
+            this.autoExpandSampleResults = items.autoExpandSampleResults;
+            this.autoExpandTextareas = items.autoExpandTextareas;
+
+            // timeout allows for Angular render time
+            setTimeout(() => {
+                this.generateCriteriaStats();
+                this.hostColoursToVariables();
+                this.expandCriteria();
+                this.expandSampleResults();
+                this.expandTextAreas();
+                this.updateCriteriaStats();
+                this.watchForCriteriaUpdates();
+                this.watchForSampleUpdates();
+            }, 1000);
+        });
     }
 
     /**
@@ -438,8 +440,6 @@ class WcagEmHelpers {
 }
 
 const wcagEmHelpers = new WcagEmHelpers({
-    autoExpandSampleResults: true,
-    autoExpandTextAreas: true,
     componentSelectorBase: 'wcag-em-helpers',
     criteriaExpandButtonSelector: '.collapse-button[aria-expanded="false"]',
     criteriaIndicesWcag21: [
