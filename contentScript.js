@@ -105,6 +105,7 @@ const WcagEmHelpers = (function () {
 
     sc.forEach((scItem, i) => {
       _setCriterionIndex(scItem, i + 1, sc.length);
+      _setCriterionWcagVersion(scItem);
     });
   };
 
@@ -133,6 +134,59 @@ const WcagEmHelpers = (function () {
     }
   };
 
+  /**
+   * @function _setCriterionWcagVersion
+   * @summary Add WCAG version label to individual criteria, as a learning tool.
+   * @memberof WcagEmHelpers
+   * @protected
+   *
+   * @param {object} domNode - DOM Node
+   */
+  const _setCriterionWcagVersion = (domNode) => {
+    const criterionTitleEl = domNode.querySelector('.criterion-title');
+
+    if (criterionTitleEl !== null) {
+      const criterionTitle = criterionTitleEl.innerHTML;
+      const criterionIndexMatch = criterionTitle.match(/([0-9])+.([0-9])+.([0-9])+/);
+      const criterionLevelMatch = criterionTitle.match(/(\(Level )+(A)+(\))/);
+      let criterionVersionLabel = 'WCAG 2.0';
+      let newCriterionTitle;
+
+      // array generated through manual inspection of WCAG EM filter output
+      const criteriaIndicesWcag21 = [
+        '1.3.4',
+        '1.3.5',
+        '1.3.6',
+        '1.4.10',
+        '1.4.11',
+        '1.4.12',
+        '1.4.13',
+        '2.1.4',
+        '2.2.6',
+        '2.3.3',
+        '2.5.1',
+        '2.5.2',
+        '2.5.3',
+        '2.5.4',
+        '2.5.5',
+        '2.5.6',
+        '4.1.3',
+      ];
+
+      if (criterionIndexMatch) {
+        const criterionIndex = criterionIndexMatch[0];
+
+        if (criteriaIndicesWcag21.includes(criterionIndex)) {
+          criterionVersionLabel = 'WCAG 2.1';
+        };
+
+        if (criterionLevelMatch) {
+          newCriterionTitle = criterionTitle.replace(criterionLevelMatch[0], `(${criterionLevelMatch[0].replace('(', '').replace(')', '')}, ${criterionVersionLabel})`);
+
+          criterionTitleEl.innerHTML = newCriterionTitle;
+        }
+      }
+    }
   };
 
   /**
@@ -223,6 +277,7 @@ const WcagEmHelpers = (function () {
 
     sc.forEach((scItem, i) => {
       _setCriterionIndex(scItem, i + 1, sc.length);
+      _setCriterionWcagVersion(scItem);
     });
   };
 
