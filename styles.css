@@ -49,7 +49,7 @@
     margin: 0;
 }
 
-.wcag-em-helpers__hidden {
+.wcag-em-helpers [hidden] {
     display: none;
 }
 

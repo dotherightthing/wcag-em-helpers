@@ -10,9 +10,11 @@
  * @param {string}  options.componentSelectorBase           - Base of helper selector
  * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
  * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
+ * @param {string}  options.criterionPanelHeadingSelector   - Selector of success criterion panel heading element
  * @param {string}  options.criterionSelector               - Selector of success criteria elements
  * @param {string}  options.criterionTitleSelector          - Selector of success criterion title element
  * @param {string}  options.criterionTitleIndexSelector     - Selector of success criterion title index element
+ * @param {string}  options.criterionValueUntested          - Value of untested success criterion
  * @param {string}  options.sampleControlContainerSelector - Selector of container wrapping sample page checkboxes
  * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
  * @param {string}  options.samplesSelectedSelector         - Selector of extra checkbox which Angular checks when a sample page is selected
@@ -27,9 +29,11 @@ class WcagEmHelpers {
         this.componentSelectorBase = options.componentSelectorBase || '';
         this.criteriaExpandButtonSelector = options.criteriaExpandButtonSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
+        this.criterionPanelHeadingSelector = options.criterionPanelHeadingSelector || '';
         this.criterionSelector = options.criterionSelector || '';
         this.criterionTitleSelector = options.criterionTitleSelector || '';
         this.criterionTitleIndexSelector = options.criterionTitleIndexSelector || '';
+        this.criterionValueUntested = options.criterionValueUntested || '';
         this.sampleControlContainerSelector = options.sampleControlContainerSelector || '';
         this.sampleExpandButtonSelector = options.sampleExpandButtonSelector || '';
         this.samplesSelectedSelector = options.samplesSelectedSelector || '';
@@ -121,7 +125,22 @@ class WcagEmHelpers {
                 count = sc.length;
             }
 
-            html += `<li class="${this.componentSelectorBase}__count ${this.componentSelectorBase}__count--${status}"><span class="${this.componentSelectorBase}__count-inner"><strong class="${this.componentSelectorBase}__count-int" id="${this.componentSelectorBase}__${status}-count">${count}</strong> ${statusMsg}</span></span></li>`;
+            html += `<li class="${this.componentSelectorBase}__count ${this.componentSelectorBase}__count--${status}">`;
+            html += `<span class="${this.componentSelectorBase}__count-inner">`;
+            html += `<strong class="${this.componentSelectorBase}__count-int" id="${this.componentSelectorBase}__${status}-count">${count}</strong> `;
+
+            if (status === 'untested') {
+                // skiplink to first untested criterion
+                html += `<a id="${this.componentSelectorBase}-skiplink">${statusMsg}</a>`;
+
+                // skiplink fallback when no untested criteria
+                html += `<span id="${this.componentSelectorBase}-noskiplink">${statusMsg}</span>`;
+            } else {
+                html += statusMsg;
+            }
+
+            html += '</span>';
+            html += '</li>';
         });
 
         html += '</ul>';
@@ -132,6 +151,44 @@ class WcagEmHelpers {
             this.setCriterionIndex(scItem, i + 1, sc.length);
             this.setCriterionWcagVersion(scItem);
         });
+
+        // can't use regular HTML anchor as Angular uses a hashbang to set virtual page views
+        const skiplink = document.querySelector(`#${this.componentSelectorBase}-skiplink`);
+        skiplink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const target = skiplink.getAttribute('href')
+            document.querySelector(`${target}`).focus();
+        });        
+    }
+
+    /**
+     * @function setSkiplinkTarget
+     * @summary Jump to the first untested success criterion.
+     * @memberof WcagEmHelpers
+     */
+    setSkiplinkTarget() {
+        const selects = document.querySelectorAll(`${this.criterionPanelHeadingSelector} select`);
+        const skiplink = document.querySelector(`#${this.componentSelectorBase}-skiplink`);
+        const noskiplink = document.querySelector(`#${this.componentSelectorBase}-noskiplink`);
+        let target = null;
+
+        for (let s = 0; s < selects.length; s++) {
+            if (selects[s].value === this.criterionValueUntested) {
+                target = selects[s].parentNode.nextElementSibling.querySelector('textarea');
+                break;
+            }
+        }
+
+        if (target !== null) {
+            // show skiplink
+            skiplink.setAttribute('href', `#${target.id}`);
+            skiplink.removeAttribute('hidden');
+            noskiplink.setAttribute('hidden', ''); // boolean attribute
+        } else {
+            // hide skiplink
+            noskiplink.removeAttribute('hidden');
+            skiplink.setAttribute('hidden', ''); // boolean attribute
+        }
     }
 
     /**
@@ -211,12 +268,12 @@ class WcagEmHelpers {
                 let panel = document.createElement('div');
 
                 if (status === 'untested') {
-                    panel.setAttribute('class', `panel criterion panel-default ${this.componentSelectorBase}__hidden`);
+                    panel.setAttribute('class', `panel criterion panel-default`);
                 } else {
-                    panel.setAttribute('class', `panel criterion ${status} ${this.componentSelectorBase}__hidden`);
+                    panel.setAttribute('class', `panel criterion ${status}`);
                 }
 
-                panel.setAttribute('aria-hidden', 'true');
+                panel.setAttribute('hidden', '');
                 document.querySelector(`.${this.componentSelectorBase}`).appendChild(panel);
 
                 let panelStyles = window.getComputedStyle(panel);
@@ -248,6 +305,7 @@ class WcagEmHelpers {
                 this.expandSampleResults();
                 this.expandTextAreas();
                 this.updateCriteriaStats();
+                this.setSkiplinkTarget();
                 this.watchForCriteriaUpdates();
                 this.watchForSampleUpdates();
             }, 1000);
@@ -332,6 +390,7 @@ class WcagEmHelpers {
             
             if (classChange === true) {
                 _self.updateCriteriaStats();
+                _self.setSkiplinkTarget();
             }
         };
 
@@ -459,6 +518,7 @@ const wcagEmHelpers = new WcagEmHelpers({
         '2.5.6',
         '4.1.3',
     ],
+    criterionPanelHeadingSelector: '.criterion > .panel-heading',
     criterionSelector: '.criterion',
     criterionTitleSelector: '.criterion-title',
     criterionTitleIndexSelector: '.criterion-title > strong',
@@ -476,6 +536,7 @@ const wcagEmHelpers = new WcagEmHelpers({
         'inapplicable',
         'canttell'
     ],
+    criterionValueUntested: 'string:earl:untested'
 });
 
 wcagEmHelpers.init();
