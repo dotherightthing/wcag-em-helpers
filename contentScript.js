@@ -20,7 +20,6 @@
  * @param {string}  options.scContainerSelector             - Selector of success criteria container
  * @param {string}  options.statsParentSelector             - Selector of element to append the stats after
  * @param {Array}   options.statuses                        - Status state strings
- * @param {string}  options.textareaSelector                - Selector of element which explanations are entered into
  */
 class WcagEmHelpers {
     constructor(options = {}) {
@@ -38,7 +37,6 @@ class WcagEmHelpers {
         this.scContainerSelector = options.scContainerSelector || '';
         this.statsParentSelector = options.statsParentSelector || '';
         this.statuses = options.statuses || [];
-        this.textareaSelector = options.textareaSelector || '';
     }
 
     /**
@@ -80,7 +78,7 @@ class WcagEmHelpers {
      */
     expandTextAreas() {
         if (this.autoExpandTextAreas) {
-            const elements = document.querySelectorAll(this.textareaSelector);
+            const elements = document.querySelectorAll('textarea');
 
             elements.forEach((el) => {
                 if (el.value !== '') {
@@ -478,7 +476,6 @@ const wcagEmHelpers = new WcagEmHelpers({
         'inapplicable',
         'canttell'
     ],
-    textareaSelector: 'textarea'
 });
 
 wcagEmHelpers.init();
