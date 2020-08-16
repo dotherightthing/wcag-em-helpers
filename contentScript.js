@@ -22,7 +22,7 @@
  * @param {string}  options.samplesSelectedSelector         - Selector of extra checkbox which Angular checks when a sample page is selected
  * @param {string}  options.sampleSelectionSelector         - Selector of checked sample page checkbox
  * @param {string}  options.scContainerSelector             - Selector of success criteria container
- * @param {string}  options.statsParentSelector             - Selector of element to append the stats after
+ * @param {string}  options.filtersSelector             - Selector of element to append the stats after
  * @param {Array}   options.statuses                        - Status state strings
  */
 class WcagEmHelpers {
@@ -43,7 +43,7 @@ class WcagEmHelpers {
         this.samplesSelectedSelector = options.samplesSelectedSelector || '';
         this.sampleSelectionSelector = options.sampleSelectionSelector || '';
         this.scContainerSelector = options.scContainerSelector || '';
-        this.statsParentSelector = options.statsParentSelector || '';
+        this.filtersSelector = options.filtersSelector || '';
         this.statuses = options.statuses || [];
     }
 
@@ -108,6 +108,24 @@ class WcagEmHelpers {
     }
 
     /**
+     * @function generateHelpersContainer
+     * @summary Create and inject container for helpers.
+     * @memberof WcagEmHelpers
+     */
+    generateHelpersContainer() {
+        const filters = document.querySelector(`${this.scContainerSelector} ${this.filtersSelector}`);
+        let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
+
+        if (wcagEmHelpersContainer === null) {
+            wcagEmHelpersContainer = document.createElement('fieldset');
+            wcagEmHelpersContainer.setAttribute('class', this.componentSelectorBase);
+            wcagEmHelpersContainer.innerHTML = '<legend class="sr-only">Helpers</legend>'; // TODO make class an option
+
+            filters.appendChild(wcagEmHelpersContainer);
+        }
+    }
+
+    /**
      * @function generateCriteriaStats
      * @summary Adds success criteria statistics to page.
      * @memberof WcagEmHelpers
@@ -115,15 +133,8 @@ class WcagEmHelpers {
     generateCriteriaStats() {
         let html = '';
         const sc = document.querySelectorAll(`${this.scContainerSelector} ${this.criterionSelector}`);
-        const statsParent = document.querySelector(`${this.scContainerSelector} ${this.statsParentSelector}`);
+        const statsContainer = document.createElement('div');
         let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
-
-        if (wcagEmHelpersContainer === null) {
-            wcagEmHelpersContainer = document.createElement('div');
-            wcagEmHelpersContainer.setAttribute('class', this.componentSelectorBase);
-
-            statsParent.appendChild(wcagEmHelpersContainer);
-        }
 
         html = `<p class="${this.componentSelectorBase}__totals">Totals:</p>`;
         html += `<ul class="${this.componentSelectorBase}__counts">`;
@@ -158,7 +169,9 @@ class WcagEmHelpers {
 
         html += '</ul>';
 
-        wcagEmHelpersContainer.innerHTML = html;
+        statsContainer.innerHTML = html;
+
+        wcagEmHelpersContainer.appendChild(statsContainer);
 
         sc.forEach((scItem, i) => {
             this.setCriterionIndex(scItem, i + 1, sc.length);
@@ -182,11 +195,9 @@ class WcagEmHelpers {
     generateExpandControls() {
         let _self = this;
         let controls = ['panels', 'textareas'];
+        const controlsContainer = document.createElement('div');
         let html = '';
         let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
-
-        html += '<fieldset class="wcag-em-helpers__controls">';
-        html += '<legend>Expand:</legend>';
 
         controls.forEach((control) => {
             html += `<label class="${this.checkboxLabelClassUnchecked}">`;
@@ -194,9 +205,8 @@ class WcagEmHelpers {
             html += '</label>';
         });
 
-        html += '</fieldset>';
-
-        wcagEmHelpersContainer.innerHTML = wcagEmHelpersContainer.innerHTML + html;
+        controlsContainer.innerHTML = html;
+        wcagEmHelpersContainer.appendChild(controlsContainer);
 
         controls.forEach((control) => {
             wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`).addEventListener('change', function() {
@@ -358,15 +368,17 @@ class WcagEmHelpers {
 
             // timeout allows for Angular render time
             setTimeout(() => {
+                this.generateHelpersContainer();
+
+                if (this.showExpandControls) {
+                    this.generateExpandControls();
+                }
+
                 this.generateCriteriaStats();
                 this.hostColoursToVariables();
                 this.updateCriteriaStats();
                 this.setSkiplinkTarget();
                 this.watchForCriteriaUpdates();
-
-                if (this.showExpandControls) {
-                    this.generateExpandControls();
-                }
             }, 1000);
         });
     }
@@ -518,7 +530,7 @@ const wcagEmHelpers = new WcagEmHelpers({
     samplesSelectedSelector: '.sample input:checked',
     sampleSelectionSelector: '.ng-not-empty',
     scContainerSelector: '[ng-controller="AuditCriteriaCtrl"]',
-    statsParentSelector: '.sc-filters',
+    filtersSelector: '.sc-filters',
     statuses: [
         'total',
         'untested',

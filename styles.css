@@ -1,20 +1,8 @@
-.wcag-em-helpers {
-    padding: .5em 0 0;
-}
-
 .wcag-em-helpers p {
     margin: 0;
 }
 
-.wcag-em-helpers__controls {
-    margin-top: 1em;
-}
-
-.wcag-em-helpers__controls > legend {
-    border-bottom: 0;
-}
-
-.wcag-em-helpers__controls > label {
+.wcag-em-helpers .btn {
     margin-right: 6px;
 }
 
@@ -71,7 +59,7 @@
 }
 
 .wcag-em-helpers p.wcag-em-helpers__totals {
-    margin-bottom: .25em;
+    margin: 1em 0 .25em;
 }
 
 .wcag-em-helpers-options {
