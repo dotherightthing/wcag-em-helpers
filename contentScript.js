@@ -125,7 +125,7 @@ class WcagEmHelpers {
             statsParent.appendChild(wcagEmHelpersContainer);
         }
 
-        html = `<p class="${this.componentSelectorBase}__showing">Showing:</p>`;
+        html = `<p class="${this.componentSelectorBase}__totals">Totals:</p>`;
         html += `<ul class="${this.componentSelectorBase}__counts">`;
 
         this.statuses.forEach((status) => {

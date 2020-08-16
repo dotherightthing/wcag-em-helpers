@@ -56,7 +56,7 @@
 }
 
 .wcag-em-helpers__counts,
-.wcag-em-helpers__showing {
+.wcag-em-helpers__totals {
     padding: 0;
     margin: 0;
 }
@@ -70,7 +70,7 @@
     margin-left: .25em;
 }
 
-.wcag-em-helpers p.wcag-em-helpers__showing {
+.wcag-em-helpers p.wcag-em-helpers__totals {
     margin-bottom: .25em;
 }
 
