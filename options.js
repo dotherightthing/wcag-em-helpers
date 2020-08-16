@@ -10,12 +10,10 @@
 function saveOptions() {
     console.log('saveOptions');
 
-    const autoExpandSampleResults = document.getElementById('auto-expand-sample-results').checked;
-    const autoExpandTextareas = document.getElementById('auto-expand-textareas').checked;
+    const showExpandControls = document.getElementById('show-expand-controls').checked;
 
     const options = {
-        autoExpandSampleResults,
-        autoExpandTextareas
+        showExpandControls
     };
 
     chrome.storage.sync.set(options, () => {
@@ -36,13 +34,11 @@ function restoreOptions() {
     console.log('restoreOptions');
 
     const defaults = {
-        autoExpandSampleResults: true,
-        autoExpandTextareas: true
+        showExpandControls: true
     };
 
     chrome.storage.sync.get(defaults, (items) => {
-        document.getElementById('auto-expand-sample-results').checked = items.autoExpandSampleResults;
-        document.getElementById('auto-expand-textareas').checked = items.autoExpandTextareas;
+        document.getElementById('show-expand-controls').checked = items.showExpandControls;
     });
 }
 

@@ -9,14 +9,11 @@
         <fieldset class="wcag-em-helpers-options__options">
             <legend class="wcag-em-helpers-options__legend">Options</legend>
             <div class="wcag-em-helpers-options__option">
-                <label for="auto-expand-sample-results">Automatically expand selected sample results</label>
-                <input type="checkbox" id="auto-expand-sample-results" aria-describedby="auto-expand-sample-results-description" />
-                <p class="wcag-em-helpers-options__tip" id="auto-expand-sample-results-description">Note: this adds a delay to the interaction</p>
-            </div>
-            <div class="wcag-em-helpers-options__option">
-                <label for="auto-expand-textareas">Automatically expand textareas</label>
-                <input type="checkbox" id="auto-expand-textareas" aria-describedby="auto-expand-textareas-description" />
-                <p class="wcag-em-helpers-options__tip" id="auto-expand-textareas-description">Note: only populated textareas will be expanded</p>
+                <label>
+                    <input type="checkbox" id="show-expand-controls" />
+                    Show additional expand controls
+                </label>
+                <p class="wcag-em-helpers-options__tip" id="show-expand-controls-description">Provides controls to expand all panels or textareas</p>
             </div>
         </fieldset>
         <div class="wcag-em-helpers-options__status" role="region" aria-live="polite" id="status"></div>

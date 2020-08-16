@@ -7,6 +7,8 @@
  * @class WcagEmHelpers
  *
  * @param {object}  options                                 - Module options
+ * @param {string}  options.checkboxLabelClassChecked      - Class of selected checkbox label in Angular app
+ * @param {string}  options.checkboxLabelClassUnchecked    - Class of unselected checkbox label in Angular app
  * @param {string}  options.componentSelectorBase           - Base of helper selector
  * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
  * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
@@ -26,6 +28,8 @@
 class WcagEmHelpers {
     constructor(options = {}) {
         // public options
+        this.checkboxLabelClassChecked = options.checkboxLabelClassChecked || '';
+        this.checkboxLabelClassUnchecked = options.checkboxLabelClassUnchecked || '';
         this.componentSelectorBase = options.componentSelectorBase || '';
         this.criteriaExpandButtonSelector = options.criteriaExpandButtonSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
@@ -62,17 +66,28 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     expandSampleResults() {
-        if (this.autoExpandSampleResults) {
-            const anySelected = document.querySelectorAll(this.samplesSelectedSelector);
+        const anySelected = document.querySelectorAll(this.samplesSelectedSelector);
 
-            if (anySelected.length) {
-                const collapsed = document.querySelectorAll(this.sampleExpandButtonSelector);
+        if (anySelected.length) {
+            const collapsed = document.querySelectorAll(this.sampleExpandButtonSelector);
 
-                collapsed.forEach(function (collapsedItem) {
-                    collapsedItem.click();
-                });
-            }
+            collapsed.forEach(function (collapsedItem) {
+                collapsedItem.click();
+            });
         }
+    }
+
+    /**
+     * @function collapseTextAreas
+     * @summary Collapse populated textareas, to save space.
+     * @memberof WcagEmHelpers
+     */
+    collapseTextAreas() {
+        const elements = document.querySelectorAll('textarea');
+
+        elements.forEach((el) => {
+            el.style.height = ''; // collapse
+        });
     }
 
     /**
@@ -81,17 +96,15 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     expandTextAreas() {
-        if (this.autoExpandTextAreas) {
-            const elements = document.querySelectorAll('textarea');
+        const elements = document.querySelectorAll('textarea');
 
-            elements.forEach((el) => {
-                if (el.value !== '') {
-                    el.style.height = 'auto'; // expand
-                } else {
-                    el.style.height = ''; // collapse
-                }
-            });
-        }
+        elements.forEach((el) => {
+            if (el.value !== '') {
+                el.style.height = 'auto'; // expand
+            } else {
+                el.style.height = ''; // collapse
+            }
+        });
     }
 
     /**
@@ -159,6 +172,53 @@ class WcagEmHelpers {
             const target = skiplink.getAttribute('href')
             document.querySelector(`${target}`).focus();
         });        
+    }
+
+    /**
+     * @function generateExpandControls
+     * @summary Adds global expand/collapse controls to page.
+     * @memberof WcagEmHelpers
+     */
+    generateExpandControls() {
+        let _self = this;
+        let controls = ['panels', 'textareas'];
+        let html = '';
+        let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
+
+        html += '<fieldset class="wcag-em-helpers__controls">';
+        html += '<legend>Expand:</legend>';
+
+        controls.forEach((control) => {
+            html += `<label class="${this.checkboxLabelClassUnchecked}">`;
+            html += `<input type="checkbox" id="${this.componentSelectorBase}-expand-${control}"><span>Expand ${control}</span>`;
+            html += '</label>';
+        });
+
+        html += '</fieldset>';
+
+        wcagEmHelpersContainer.innerHTML = wcagEmHelpersContainer.innerHTML + html;
+
+        controls.forEach((control) => {
+            wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`).addEventListener('change', function() {
+                if (this.checked) {
+                    this.parentNode.className = _self.checkboxLabelClassChecked;
+
+                    if (this.id === `${_self.componentSelectorBase}-expand-panels`) {
+                        _self.expandCriteria();
+                        _self.expandSampleResults();
+                        this.setAttribute('disabled', '');
+                    } else if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
+                        _self.expandTextAreas();
+                    }
+                } else {
+                    this.parentNode.className = _self.checkboxLabelClassUnchecked;
+
+                    if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
+                        _self.collapseTextAreas();
+                    }
+                }
+            });
+        });
     }
 
     /**
@@ -294,20 +354,19 @@ class WcagEmHelpers {
     setup() {
         // get extension options
         chrome.storage.sync.get(null, (items) => {
-            this.autoExpandSampleResults = items.autoExpandSampleResults;
-            this.autoExpandTextareas = items.autoExpandTextareas;
+            this.showExpandControls = items.showExpandControls;
 
             // timeout allows for Angular render time
             setTimeout(() => {
                 this.generateCriteriaStats();
                 this.hostColoursToVariables();
-                this.expandCriteria();
-                this.expandSampleResults();
-                this.expandTextAreas();
                 this.updateCriteriaStats();
                 this.setSkiplinkTarget();
                 this.watchForCriteriaUpdates();
-                this.watchForSampleUpdates();
+
+                if (this.showExpandControls) {
+                    this.generateExpandControls();
+                }
             }, 1000);
         });
     }
@@ -408,76 +467,6 @@ class WcagEmHelpers {
     }
 
     /**
-     * @function watchForSampleUpdates
-     * @summary When Angular updates the sample selection, expand the sample results.
-     * @memberof WcagEmHelpers
-     */
-    watchForSampleUpdates() {
-        // The mutations to observe
-        // https://stackoverflow.com/a/40195712/6850747
-
-        // innerHTML
-        // const config = { characterData: true, attributes: false, childList: false, subtree: true };
-
-        // textContent
-        // const config = { characterData: false, attributes: false, childList: true, subtree: false };
-
-        let observer;
-
-        const config = {
-            attributes: true,
-            attributesFilter: ['class'],
-            characterData: false,
-            childList: false,
-            subtree: true,
-        };
-
-        const _self = this;
-
-        const callback = function (mutationsList) {
-            let classChange = false;
-            let classRegx = new RegExp(_self.sampleSelectionSelector.substring(1));
-
-            mutationsList.some(function (mutationsListItem) {
-                let mutationRecord = mutationsListItem;
-
-                if (typeof mutationRecord !== 'undefined') {
-                    if (mutationRecord.type === 'attributes') {
-                        let target = mutationRecord.target;
-                        let tag = target.tagName;
-                        let attr = mutationRecord.attributeName;
-
-                        if ((tag === 'INPUT') && (attr === 'class')) {
-                            if (target.className.match(classRegx)) {
-                                classChange = true;
-                            }
-
-                            return classChange; // continue (false) or break (true) loop
-                        }
-                    }
-                }
-            });
-
-            if (classChange === true) {
-                _self.expandSampleResults();
-                _self.expandTextAreas();
-                
-                // stop observing
-                observer.disconnect();
-            }
-        };
-
-        // The node that will be observed for mutations
-        const targetNode = document.querySelector(_self.sampleControlContainerSelector);
-
-        // Create an observer instance with a callback function
-        observer = new MutationObserver(callback);
-
-        // Start observing the target node for configured mutations
-        observer.observe(targetNode, config);
-    }
-
-    /**
      * @function init
      * @summary Initialise the app.
      * @memberof WcagEmHelpers
@@ -497,6 +486,8 @@ class WcagEmHelpers {
 }
 
 const wcagEmHelpers = new WcagEmHelpers({
+    checkboxLabelClassChecked: 'btn btn-sm btn-primary',
+    checkboxLabelClassUnchecked: 'btn btn-sm btn-primary-invert',
     componentSelectorBase: 'wcag-em-helpers',
     criteriaExpandButtonSelector: '.collapse-button[aria-expanded="false"]',
     criteriaIndicesWcag21: [

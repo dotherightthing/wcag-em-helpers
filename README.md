@@ -17,11 +17,11 @@ Google Chrome extension which (unofficially) supplements the WCAG EM reporting t
 
 ![Screenshot of criterion index and WCAG version](/images/screenshots/criterion-index-and-wcag-version.png)
 
-### Expands panels
+### Expand all panels / textareas
 
-* Automatically expands all success criteria, so that results for the entire sample can be seen at a glance.
-* Provides option to automatically expand individual sample results, so that page specific results can be seen at a glance.
-* Provides option to automatically expand populated textareas, so that observations can be seen at a glance.
+* Expands all success criteria on demand, so that results for the entire sample can be seen at a glance.
+* Expand individual sample results on demand, so that page specific results can be seen at a glance.
+* Expand populated textareas on demand, so that observations can be seen at a glance.
 
 ![Screenshot of expanded panel and textarea](/images/screenshots/expanded-panel-and-textarea.png)
 

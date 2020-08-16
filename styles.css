@@ -6,6 +6,18 @@
     margin: 0;
 }
 
+.wcag-em-helpers__controls {
+    margin-top: 1em;
+}
+
+.wcag-em-helpers__controls > legend {
+    border-bottom: 0;
+}
+
+.wcag-em-helpers__controls > label {
+    margin-right: 6px;
+}
+
 .wcag-em-helpers__count {
     display: inline-block;
     padding: 0 0 0 .125em; /* border */
