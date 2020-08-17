@@ -11,20 +11,20 @@
  * @param {string}  options.checkboxLabelClassDisabled      - Class of disabled checkbox label in Angular app
  * @param {string}  options.checkboxLabelClassUnchecked     - Class of unselected checkbox label in Angular app
  * @param {string}  options.componentSelectorBase           - Base of helper selector
- * @param {string}  options.criteriaCollapseButtonSelector  - Selector of button which closes criteria panels
- * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
- * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
- * @param {string}  options.criterionPanelHeadingSelector   - Selector of success criterion panel heading element
- * @param {string}  options.criterionSelector               - Selector of success criteria elements
- * @param {string}  options.criterionTitleSelector          - Selector of success criterion title element
- * @param {string}  options.criterionTitleIndexSelector     - Selector of success criterion title index element
- * @param {string}  options.criterionValueUntested          - Value of untested success criterion
+ * @param {string}  options.guidelineCollapseButtonSelector - Selector of button which closes guideline panels
+ * @param {string}  options.guidelineExpandButtonSelector   - Selector of button which opens guideline panels
+ * @param {Array}   options.criteriaIndicesWcag21           - WCAG 2.1 success criteria indices, copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
+ * @param {string}  options.criterionHeadingSelector        - Selector of guideline panel heading element
+ * @param {string}  options.criterionSelector               - Selector of guideline elements
+ * @param {string}  options.criterionTitleSelector          - Selector of guideline title element
+ * @param {string}  options.criterionTitleIndexSelector     - Selector of guideline title index element
+ * @param {string}  options.criterionValueUntested          - Value of untested guideline
  * @param {string}  options.sampleControlContainerSelector  - Selector of container wrapping sample page checkboxes
  * @param {string}  options.sampleCollapseButtonSelector    - Selector of button which closes sample panels
  * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
  * @param {string}  options.sampleCheckboxSelector          - Selector of sample page checkbox
  * @param {string}  options.sampleSelectionSelector         - Selector of checked sample page checkbox
- * @param {string}  options.scContainerSelector             - Selector of success criteria container
+ * @param {string}  options.criteriaContainerSelector       - Selector of success criteria container
  * @param {string}  options.filtersSelector                 - Selector of element to append the stats after
  * @param {Array}   options.statuses                        - Status state strings
  */
@@ -35,10 +35,10 @@ class WcagEmHelpers {
         this.checkboxLabelClassDisabled = options.checkboxLabelClassDisabled || '';
         this.checkboxLabelClassUnchecked = options.checkboxLabelClassUnchecked || '';
         this.componentSelectorBase = options.componentSelectorBase || '';
-        this.criteriaCollapseButtonSelector = options.criteriaCollapseButtonSelector || '';
-        this.criteriaExpandButtonSelector = options.criteriaExpandButtonSelector || '';
+        this.guidelineCollapseButtonSelector = options.guidelineCollapseButtonSelector || '';
+        this.guidelineExpandButtonSelector = options.guidelineExpandButtonSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
-        this.criterionPanelHeadingSelector = options.criterionPanelHeadingSelector || '';
+        this.criterionHeadingSelector = options.criterionHeadingSelector || '';
         this.criterionSelector = options.criterionSelector || '';
         this.criterionTitleSelector = options.criterionTitleSelector || '';
         this.criterionTitleIndexSelector = options.criterionTitleIndexSelector || '';
@@ -48,21 +48,21 @@ class WcagEmHelpers {
         this.sampleExpandButtonSelector = options.sampleExpandButtonSelector || '';
         this.sampleCheckboxSelector = options.sampleCheckboxSelector || '';
         this.sampleSelectionSelector = options.sampleSelectionSelector || '';
-        this.scContainerSelector = options.scContainerSelector || '';
+        this.criteriaContainerSelector = options.criteriaContainerSelector || '';
         this.filtersSelector = options.filtersSelector || '';
         this.statuses = options.statuses || [];
     }
 
     /**
-     * @function expandCriteria
-     * @summary Expand all success criteria, so that results for the entire sample can be seen at a glance.
+     * @function expandGuidelines
+     * @summary Expand all guidelines, so that results for the entire sample can be seen at a glance.
      * @memberof WcagEmHelpers
      *
      * @param {boolean} expand - Expand (true) or collapse (false)
      */
-    expandCriteria(expand) {
-        const collapseControls = document.querySelectorAll(this.criteriaCollapseButtonSelector);
-        const expandControls = document.querySelectorAll(this.criteriaExpandButtonSelector);
+    expandGuidelines(expand) {
+        const collapseControls = document.querySelectorAll(this.guidelineCollapseButtonSelector);
+        const expandControls = document.querySelectorAll(this.guidelineExpandButtonSelector);
 
         if (expand) {
             expandControls.forEach((expandControl) => {
@@ -122,7 +122,7 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     generateHelpersContainer() {
-        const filters = document.querySelector(`${this.scContainerSelector} ${this.filtersSelector}`);
+        const filters = document.querySelector(`${this.criteriaContainerSelector} ${this.filtersSelector}`);
         let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
 
         if (wcagEmHelpersContainer === null) {
@@ -141,11 +141,11 @@ class WcagEmHelpers {
      */
     generateCriteriaStats() {
         let html = '';
-        const sc = document.querySelectorAll(`${this.scContainerSelector} ${this.criterionSelector}`);
+        const sc = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
         const statsContainer = document.createElement('div');
         let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
 
-        html = `<p class="${this.componentSelectorBase}__totals">Totals:</p>`;
+        html = `<p class="${this.componentSelectorBase}__totals">Success Criteria:</p>`;
         html += `<ul class="${this.componentSelectorBase}__counts">`;
 
         this.statuses.forEach((status) => {
@@ -220,7 +220,7 @@ class WcagEmHelpers {
      */
     generateExpandControls() {
         let _self = this;
-        let controls = ['criteria', 'samples', 'textareas'];
+        let controls = ['guidelines', 'samples', 'textareas'];
         const controlsContainer = document.createElement('div');
         let extraAttrs = '';
         let html = '';
@@ -229,7 +229,7 @@ class WcagEmHelpers {
 
         controls.forEach((control) => {
             // default Angular state is open
-            if (control === 'criteria') {
+            if (control === 'guidelines') {
                 extraAttrs = ' checked="checked"';
             } else {
                 extraAttrs = '';
@@ -253,8 +253,8 @@ class WcagEmHelpers {
             controlSelector.addEventListener('change', function () {
 
                 if (this.checked) {
-                    if (this.id === `${_self.componentSelectorBase}-expand-criteria`) {
-                        _self.expandCriteria(true);
+                    if (this.id === `${_self.componentSelectorBase}-expand-guidelines`) {
+                        _self.expandGuidelines(true);
                         document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).removeAttribute('disabled');
                         document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).removeAttribute('disabled');
                     } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
@@ -263,8 +263,8 @@ class WcagEmHelpers {
                         _self.expandTextareas(true);
                     }
                 } else {
-                    if (this.id === `${_self.componentSelectorBase}-expand-criteria`) {
-                        _self.expandCriteria(false);
+                    if (this.id === `${_self.componentSelectorBase}-expand-guidelines`) {
+                        _self.expandGuidelines(false);
                         document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).setAttribute('disabled', '');
                         document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).setAttribute('disabled', '');
                     } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
@@ -293,7 +293,7 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     setSkiplinkTarget() {
-        const selects = document.querySelectorAll(`${this.criterionPanelHeadingSelector} select`);
+        const selects = document.querySelectorAll(`${this.criterionHeadingSelector} select`);
         const skiplink = document.querySelector(`#${this.componentSelectorBase}-skiplink`);
         const noskiplink = document.querySelector(`#${this.componentSelectorBase}-noskiplink`);
         let target = null;
@@ -445,8 +445,8 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     updateCriteriaStats() {
-        const scContainerElement = document.querySelector(this.scContainerSelector);
-        const sc = document.querySelectorAll(`${this.scContainerSelector} ${this.criterionSelector}`);
+        const scContainerElement = document.querySelector(this.criteriaContainerSelector);
+        const sc = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
 
         this.statuses.forEach((status) => {
             let count;
@@ -522,7 +522,7 @@ class WcagEmHelpers {
         };
 
         // The node that will be observed for mutations
-        const targetNode = document.querySelector(_self.scContainerSelector);
+        const targetNode = document.querySelector(_self.criteriaContainerSelector);
 
         // Create an observer instance with a callback function
         const observer = new MutationObserver(callback);
@@ -558,8 +558,8 @@ const wcagEmHelpers = new WcagEmHelpers({
     checkboxLabelClassDisabled: 'btn btn-sm btn-primary-invert disabled',
     checkboxLabelClassUnchecked: 'btn btn-sm btn-primary-invert',
     componentSelectorBase: 'wcag-em-helpers',
-    criteriaCollapseButtonSelector: '.collapse-button[target="g"][aria-expanded="true"]',
-    criteriaExpandButtonSelector: '.collapse-button[target="g"][aria-expanded="false"]',
+    guidelineCollapseButtonSelector: '.collapse-button[target="g"][aria-expanded="true"]',
+    guidelineExpandButtonSelector: '.collapse-button[target="g"][aria-expanded="false"]',
     criteriaIndicesWcag21: [
         '1.3.4',
         '1.3.5',
@@ -579,7 +579,7 @@ const wcagEmHelpers = new WcagEmHelpers({
         '2.5.6',
         '4.1.3',
     ],
-    criterionPanelHeadingSelector: '.criterion > .panel-heading',
+    criterionHeadingSelector: '.criterion > .panel-heading',
     criterionSelector: '.criterion',
     criterionTitleSelector: '.criterion-title',
     criterionTitleIndexSelector: '.criterion-title > strong',
@@ -588,7 +588,7 @@ const wcagEmHelpers = new WcagEmHelpers({
     sampleExpandButtonSelector: '.crit-detail-btn > [aria-expanded="false"]',
     sampleCheckboxSelector: '[ng-controller="AuditSamplePagesCtrl"] input[type="checkbox"]',
     sampleSelectionSelector: '.ng-not-empty',
-    scContainerSelector: '[ng-controller="AuditCriteriaCtrl"]',
+    criteriaContainerSelector: '[ng-controller="AuditCriteriaCtrl"]',
     filtersSelector: '.sc-filters',
     statuses: [
         'total',
