@@ -7,9 +7,11 @@
  * @class WcagEmHelpers
  *
  * @param {object}  options                                 - Module options
- * @param {string}  options.checkboxLabelClassChecked      - Class of selected checkbox label in Angular app
- * @param {string}  options.checkboxLabelClassUnchecked    - Class of unselected checkbox label in Angular app
+ * @param {string}  options.checkboxLabelClassChecked       - Class of selected checkbox label in Angular app
+ * @param {string}  options.checkboxLabelClassDisabled      - Class of disabled checkbox label in Angular app
+ * @param {string}  options.checkboxLabelClassUnchecked     - Class of unselected checkbox label in Angular app
  * @param {string}  options.componentSelectorBase           - Base of helper selector
+ * @param {string}  options.criteriaCollapseButtonSelector  - Selector of button which closes criteria panels
  * @param {string}  options.criteriaExpandButtonSelector    - Selector of button which opens criteria panels
  * @param {Array}   options.criteriaIndicesWcag21           - Copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
  * @param {string}  options.criterionPanelHeadingSelector   - Selector of success criterion panel heading element
@@ -17,20 +19,23 @@
  * @param {string}  options.criterionTitleSelector          - Selector of success criterion title element
  * @param {string}  options.criterionTitleIndexSelector     - Selector of success criterion title index element
  * @param {string}  options.criterionValueUntested          - Value of untested success criterion
- * @param {string}  options.sampleControlContainerSelector - Selector of container wrapping sample page checkboxes
+ * @param {string}  options.sampleControlContainerSelector  - Selector of container wrapping sample page checkboxes
+ * @param {string}  options.sampleCollapseButtonSelector    - Selector of button which closes sample panels
  * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
- * @param {string}  options.samplesSelectedSelector         - Selector of extra checkbox which Angular checks when a sample page is selected
+ * @param {string}  options.sampleCheckboxSelector          - Selector of sample page checkbox
  * @param {string}  options.sampleSelectionSelector         - Selector of checked sample page checkbox
  * @param {string}  options.scContainerSelector             - Selector of success criteria container
- * @param {string}  options.filtersSelector             - Selector of element to append the stats after
+ * @param {string}  options.filtersSelector                 - Selector of element to append the stats after
  * @param {Array}   options.statuses                        - Status state strings
  */
 class WcagEmHelpers {
     constructor(options = {}) {
         // public options
         this.checkboxLabelClassChecked = options.checkboxLabelClassChecked || '';
+        this.checkboxLabelClassDisabled = options.checkboxLabelClassDisabled || '';
         this.checkboxLabelClassUnchecked = options.checkboxLabelClassUnchecked || '';
         this.componentSelectorBase = options.componentSelectorBase || '';
+        this.criteriaCollapseButtonSelector = options.criteriaCollapseButtonSelector || '';
         this.criteriaExpandButtonSelector = options.criteriaExpandButtonSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
         this.criterionPanelHeadingSelector = options.criterionPanelHeadingSelector || '';
@@ -39,8 +44,9 @@ class WcagEmHelpers {
         this.criterionTitleIndexSelector = options.criterionTitleIndexSelector || '';
         this.criterionValueUntested = options.criterionValueUntested || '';
         this.sampleControlContainerSelector = options.sampleControlContainerSelector || '';
+        this.sampleCollapseButtonSelector = options.sampleCollapseButtonSelector || '';
         this.sampleExpandButtonSelector = options.sampleExpandButtonSelector || '';
-        this.samplesSelectedSelector = options.samplesSelectedSelector || '';
+        this.sampleCheckboxSelector = options.sampleCheckboxSelector || '';
         this.sampleSelectionSelector = options.sampleSelectionSelector || '';
         this.scContainerSelector = options.scContainerSelector || '';
         this.filtersSelector = options.filtersSelector || '';
@@ -51,55 +57,58 @@ class WcagEmHelpers {
      * @function expandCriteria
      * @summary Expand all success criteria, so that results for the entire sample can be seen at a glance.
      * @memberof WcagEmHelpers
+     *
+     * @param {boolean} expand - Expand (true) or collapse (false)
      */
-    expandCriteria() {
-        const collapsed = document.querySelectorAll(this.criteriaExpandButtonSelector);
+    expandCriteria(expand) {
+        const collapseControls = document.querySelectorAll(this.criteriaCollapseButtonSelector);
+        const expandControls = document.querySelectorAll(this.criteriaExpandButtonSelector);
 
-        collapsed.forEach((collapsedItem) => {
-            collapsedItem.click();
-        });
+        if (expand) {
+            expandControls.forEach((expandControl) => {
+                expandControl.click();
+            });
+        } else {
+            collapseControls.forEach((collapseControl) => {
+                collapseControl.click();
+            });
+        }
     }
 
     /**
      * @function expandSampleResults
      * @summary Expand individual sample results, so that page specific results can be seen at a glance.
      * @memberof WcagEmHelpers
+     *
+     * @param {boolean} expand - Expand (true) or collapse (false)
      */
-    expandSampleResults() {
-        const anySelected = document.querySelectorAll(this.samplesSelectedSelector);
+    expandSampleResults(expand) {
+        const collapseControls = document.querySelectorAll(this.sampleCollapseButtonSelector);
+        const expandControls = document.querySelectorAll(this.sampleExpandButtonSelector);
 
-        if (anySelected.length) {
-            const collapsed = document.querySelectorAll(this.sampleExpandButtonSelector);
-
-            collapsed.forEach(function (collapsedItem) {
-                collapsedItem.click();
+        if (expand) {
+            expandControls.forEach(function (expandControl) {
+                expandControl.click();
+            });
+        } else {
+            collapseControls.forEach(function (collapseControl) {
+                collapseControl.click();
             });
         }
     }
 
     /**
-     * @function collapseTextAreas
-     * @summary Collapse populated textareas, to save space.
-     * @memberof WcagEmHelpers
-     */
-    collapseTextAreas() {
-        const elements = document.querySelectorAll('textarea');
-
-        elements.forEach((el) => {
-            el.style.height = ''; // collapse
-        });
-    }
-
-    /**
-     * @function expandTextAreas
+     * @function expandTextareas
      * @summary Expand populated textareas, so that observations can be seen at a glance.
      * @memberof WcagEmHelpers
+     *
+     * @param {boolean} expand - Expand (true) or collapse (false)
      */
-    expandTextAreas() {
+    expandTextareas(expand) {
         const elements = document.querySelectorAll('textarea');
 
         elements.forEach((el) => {
-            if (el.value !== '') {
+            if (expand && (el.value !== '')) {
                 el.style.height = 'auto'; // expand
             } else {
                 el.style.height = ''; // collapse
@@ -188,46 +197,93 @@ class WcagEmHelpers {
     }
 
     /**
+     * @function setCheckboxClassname
+     * @summary Apply the classnames available in the Angular app.
+     * @memberof WcagEmHelpers
+     *
+     * @param {object} checkboxElement - DOM checkbox element
+     */
+    setCheckboxClassname(checkboxElement) {
+        if (checkboxElement.checked) {
+            checkboxElement.parentNode.className = this.checkboxLabelClassChecked;
+        } else if (checkboxElement.disabled) {
+            checkboxElement.parentNode.className = this.checkboxLabelClassDisabled;
+        } else {
+            checkboxElement.parentNode.className = this.checkboxLabelClassUnchecked;
+        }
+    }
+
+    /**
      * @function generateExpandControls
      * @summary Adds global expand/collapse controls to page.
      * @memberof WcagEmHelpers
      */
     generateExpandControls() {
         let _self = this;
-        let controls = ['panels', 'textareas'];
+        let controls = ['criteria', 'samples', 'textareas'];
         const controlsContainer = document.createElement('div');
+        let extraAttrs = '';
         let html = '';
+        const sampleCheckboxEls = document.querySelectorAll(this.sampleCheckboxSelector);
         let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
 
         controls.forEach((control) => {
+            // default Angular state is open
+            if (control === 'criteria') {
+                extraAttrs = ' checked="checked"';
+            } else {
+                extraAttrs = '';
+            }
+
             html += `<label class="${this.checkboxLabelClassUnchecked}">`;
-            html += `<input type="checkbox" id="${this.componentSelectorBase}-expand-${control}"><span>Expand ${control}</span>`;
+            html += `<input type="checkbox" id="${this.componentSelectorBase}-expand-${control}"${extraAttrs}><span>Expand ${control}</span>`;
             html += '</label>';
         });
 
         controlsContainer.innerHTML = html;
         wcagEmHelpersContainer.appendChild(controlsContainer);
 
-        controls.forEach((control) => {
-            wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`).addEventListener('change', function() {
-                if (this.checked) {
-                    this.parentNode.className = _self.checkboxLabelClassChecked;
+        // trigger listener to set up element
+        sampleCheckboxEls[0].dispatchEvent(new Event('change', { 'bubbles': true }));
 
-                    if (this.id === `${_self.componentSelectorBase}-expand-panels`) {
-                        _self.expandCriteria();
-                        _self.expandSampleResults();
-                        this.setAttribute('disabled', '');
+        controls.forEach((control) => {
+            const controlSelector = wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`);
+
+            // add change listener
+            controlSelector.addEventListener('change', function () {
+
+                if (this.checked) {
+                    if (this.id === `${_self.componentSelectorBase}-expand-criteria`) {
+                        _self.expandCriteria(true);
+                        document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).removeAttribute('disabled');
+                        document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).removeAttribute('disabled');
+                    } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
+                        _self.expandSampleResults(true);
                     } else if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
-                        _self.expandTextAreas();
+                        _self.expandTextareas(true);
                     }
                 } else {
-                    this.parentNode.className = _self.checkboxLabelClassUnchecked;
-
-                    if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
-                        _self.collapseTextAreas();
+                    if (this.id === `${_self.componentSelectorBase}-expand-criteria`) {
+                        _self.expandCriteria(false);
+                        document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).setAttribute('disabled', '');
+                        document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).setAttribute('disabled', '');
+                    } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
+                        _self.expandSampleResults(false);
+                    } else if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
+                        _self.expandTextareas(false);
                     }
                 }
+
+                controls.forEach((control) => {
+                    const el = document.querySelector(`#${_self.componentSelectorBase}-expand-${control}`);
+                    _self.setCheckboxClassname(el);
+                });
             });
+        });
+
+        // trigger listener to set up element
+        controls.forEach((control) => {
+            wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`).dispatchEvent(new Event('change', { 'bubbles': true }));
         });
     }
 
@@ -499,9 +555,11 @@ class WcagEmHelpers {
 
 const wcagEmHelpers = new WcagEmHelpers({
     checkboxLabelClassChecked: 'btn btn-sm btn-primary',
+    checkboxLabelClassDisabled: 'btn btn-sm btn-primary-invert disabled',
     checkboxLabelClassUnchecked: 'btn btn-sm btn-primary-invert',
     componentSelectorBase: 'wcag-em-helpers',
-    criteriaExpandButtonSelector: '.collapse-button[aria-expanded="false"]',
+    criteriaCollapseButtonSelector: '.collapse-button[target="g"][aria-expanded="true"]',
+    criteriaExpandButtonSelector: '.collapse-button[target="g"][aria-expanded="false"]',
     criteriaIndicesWcag21: [
         '1.3.4',
         '1.3.5',
@@ -526,8 +584,9 @@ const wcagEmHelpers = new WcagEmHelpers({
     criterionTitleSelector: '.criterion-title',
     criterionTitleIndexSelector: '.criterion-title > strong',
     sampleControlContainerSelector: '[ng-controller="AuditSamplePagesCtrl"]',
+    sampleCollapseButtonSelector: '.crit-detail-btn > [aria-expanded="true"]',
     sampleExpandButtonSelector: '.crit-detail-btn > [aria-expanded="false"]',
-    samplesSelectedSelector: '.sample input:checked',
+    sampleCheckboxSelector: '[ng-controller="AuditSamplePagesCtrl"] input[type="checkbox"]',
     sampleSelectionSelector: '.ng-not-empty',
     scContainerSelector: '[ng-controller="AuditCriteriaCtrl"]',
     filtersSelector: '.sc-filters',
