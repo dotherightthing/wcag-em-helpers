@@ -10,23 +10,27 @@
  * @param {string}  options.checkboxLabelClassChecked       - Class of selected checkbox label in Angular app
  * @param {string}  options.checkboxLabelClassDisabled      - Class of disabled checkbox label in Angular app
  * @param {string}  options.checkboxLabelClassUnchecked     - Class of unselected checkbox label in Angular app
- * @param {string}  options.componentSelectorBase           - Base of helper selector
- * @param {string}  options.guidelineCollapseButtonSelector - Selector of button which closes guideline panels
- * @param {string}  options.guidelineExpandButtonSelector   - Selector of button which opens guideline panels
+ * @param {string}  options.criteriaContainerSelector       - Selector of success criteria container
  * @param {Array}   options.criteriaIndicesWcag21           - WCAG 2.1 success criteria indices, copied from WCAG EM filter output (WCAG 2.0 succeeds WCAG 1.0, WCAG 2.1 extends WCAG 2.0)
  * @param {string}  options.criterionHeadingSelector        - Selector of guideline panel heading element
  * @param {string}  options.criterionSelector               - Selector of guideline elements
- * @param {string}  options.criterionTitleSelector          - Selector of guideline title element
  * @param {string}  options.criterionTitleIndexSelector     - Selector of guideline title index element
+ * @param {string}  options.criterionTitleSelector          - Selector of guideline title element
  * @param {string}  options.criterionValueUntested          - Value of untested guideline
- * @param {string}  options.sampleControlContainerSelector  - Selector of container wrapping sample page checkboxes
- * @param {string}  options.sampleCollapseButtonSelector    - Selector of button which closes sample panels
- * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
+ * @param {string}  options.guidelineCollapseButtonSelector - Selector of button which closes guideline panels
+ * @param {string}  options.guidelineExpandButtonSelector   - Selector of button which opens guideline panels
+ * @param {string}  options.helpersElementName              - Element to use for generated helpers container
+ * @param {string}  options.helpersParentSelector           - Selector of element to append the helpers after
+ * @param {string}  options.helpersSiblingSelector          - Selector of element to append the helpers before
+ * @param {string}  options.helpersSelectorBase             - Base of helper selector
+ * @param {string}  options.helpersStatsHeadingSelector     - Selector of heading above generated criteria stats
  * @param {string}  options.sampleCheckboxSelector          - Selector of sample page checkbox
+ * @param {string}  options.sampleCollapseButtonSelector    - Selector of button which closes sample panels
+ * @param {string}  options.sampleControlContainerSelector  - Selector of container wrapping sample page checkboxes
+ * @param {string}  options.sampleExpandButtonSelector      - Selector of button which opens sample panels
  * @param {string}  options.sampleSelectionSelector         - Selector of checked sample page checkbox
- * @param {string}  options.criteriaContainerSelector       - Selector of success criteria container
- * @param {string}  options.filtersSelector                 - Selector of element to append the stats after
  * @param {Array}   options.statuses                        - Status state strings
+ * @param {string}  options.visuallyhiddenSelector          - Class of visually hidden elements in Angular app
  */
 class WcagEmHelpers {
     constructor(options = {}) {
@@ -34,23 +38,27 @@ class WcagEmHelpers {
         this.checkboxLabelClassChecked = options.checkboxLabelClassChecked || '';
         this.checkboxLabelClassDisabled = options.checkboxLabelClassDisabled || '';
         this.checkboxLabelClassUnchecked = options.checkboxLabelClassUnchecked || '';
-        this.componentSelectorBase = options.componentSelectorBase || '';
-        this.guidelineCollapseButtonSelector = options.guidelineCollapseButtonSelector || '';
-        this.guidelineExpandButtonSelector = options.guidelineExpandButtonSelector || '';
+        this.criteriaContainerSelector = options.criteriaContainerSelector || '';
         this.criteriaIndicesWcag21 = options.criteriaIndicesWcag21 || [];
         this.criterionHeadingSelector = options.criterionHeadingSelector || '';
         this.criterionSelector = options.criterionSelector || '';
-        this.criterionTitleSelector = options.criterionTitleSelector || '';
         this.criterionTitleIndexSelector = options.criterionTitleIndexSelector || '';
+        this.criterionTitleSelector = options.criterionTitleSelector || '';
         this.criterionValueUntested = options.criterionValueUntested || '';
-        this.sampleControlContainerSelector = options.sampleControlContainerSelector || '';
-        this.sampleCollapseButtonSelector = options.sampleCollapseButtonSelector || '';
-        this.sampleExpandButtonSelector = options.sampleExpandButtonSelector || '';
+        this.guidelineCollapseButtonSelector = options.guidelineCollapseButtonSelector || '';
+        this.guidelineExpandButtonSelector = options.guidelineExpandButtonSelector || '';
+        this.helpersElementName = options.helpersElementName || '';
+        this.helpersParentSelector = options.helpersParentSelector || '';
+        this.helpersSelectorBase = options.helpersSelectorBase || '';
+        this.helpersSiblingSelector = options.helpersSiblingSelector || '';
+        this.helpersStatsHeadingSelector = options.helpersStatsHeadingSelector || '';
         this.sampleCheckboxSelector = options.sampleCheckboxSelector || '';
+        this.sampleCollapseButtonSelector = options.sampleCollapseButtonSelector || '';
+        this.sampleControlContainerSelector = options.sampleControlContainerSelector || '';
+        this.sampleExpandButtonSelector = options.sampleExpandButtonSelector || '';
         this.sampleSelectionSelector = options.sampleSelectionSelector || '';
-        this.criteriaContainerSelector = options.criteriaContainerSelector || '';
-        this.filtersSelector = options.filtersSelector || '';
         this.statuses = options.statuses || [];
+        this.visuallyhiddenSelector = options.visuallyhiddenSelector || '';
     }
 
     /**
@@ -122,52 +130,62 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     generateHelpersContainer() {
-        const filters = document.querySelector(`${this.criteriaContainerSelector} ${this.filtersSelector}`);
-        let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
+        let helpersParentElement = null;
+        let helpersElement = document.querySelector(`.${this.helpersSelectorBase}`);
+        let helpersSiblingElement = null;
 
-        if (wcagEmHelpersContainer === null) {
-            wcagEmHelpersContainer = document.createElement('fieldset');
-            wcagEmHelpersContainer.setAttribute('class', this.componentSelectorBase);
-            wcagEmHelpersContainer.innerHTML = '<legend class="sr-only">Helpers</legend>'; // TODO make class an option
+        if (this.helpersParentSelector) {
+            helpersParentElement = document.querySelector(`${this.helpersParentSelector}`);
+        } else if (this.helpersSiblingSelector) {
+            helpersSiblingElement = document.querySelector(`${this.helpersSiblingSelector}`);
+        }
 
-            filters.appendChild(wcagEmHelpersContainer);
+        if (helpersElement === null) {
+            helpersElement = document.createElement(this.helpersElementName);
+            helpersElement.setAttribute('class', this.helpersSelectorBase);
+
+            if (this.helpersElementName === 'fieldset') {
+                helpersElement.innerHTML = `<legend class="${this.visuallyhiddenSelector}">Helpers</legend>`;
+            }
+
+            if (helpersParentElement !== null) {
+                helpersParentElement.appendChild(helpersElement);
+            } else if (helpersSiblingElement !== null) {
+                helpersSiblingElement.parentNode.insertBefore(helpersElement, helpersSiblingElement);
+            }
         }
     }
 
     /**
-     * @function generateCriteriaStats
+     * @function scaffoldCriteriaStats
      * @summary Adds success criteria statistics to page.
      * @memberof WcagEmHelpers
      */
-    generateCriteriaStats() {
+    scaffoldCriteriaStats() {
         let html = '';
-        const sc = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
-        const statsContainer = document.createElement('div');
-        let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
+        const helpersStatsContainer = document.createElement('div');
+        let helpersElement = document.querySelector(`.${this.helpersSelectorBase}`);
 
-        html = `<p class="${this.componentSelectorBase}__totals">Success Criteria:</p>`;
-        html += `<ul class="${this.componentSelectorBase}__counts">`;
+        html = `<${this.helpersStatsHeadingSelector} class="${this.helpersSelectorBase}__totals">Success Criteria:</${this.helpersStatsHeadingSelector}>`;
+        html += `<ul class="${this.helpersSelectorBase}__counts">`;
 
         this.statuses.forEach((status) => {
             let statusMsg = status;
-            let count = 0;
 
             if (status === 'canttell') {
                 statusMsg = 'cannot tell';
-            } else if (status === 'total') {
-                count = sc.length;
             }
 
-            html += `<li class="${this.componentSelectorBase}__count ${this.componentSelectorBase}__count--${status}">`;
-            html += `<span class="${this.componentSelectorBase}__count-inner">`;
-            html += `<strong class="${this.componentSelectorBase}__count-int" id="${this.componentSelectorBase}__${status}-count">${count}</strong> `;
+            html += `<li class="${this.helpersSelectorBase}__count ${this.helpersSelectorBase}__count--${status}">`;
+            html += `<span class="${this.helpersSelectorBase}__count-inner">`;
+            html += `<strong class="${this.helpersSelectorBase}__count-int" id="${this.helpersSelectorBase}__${status}-count">0</strong> `;
 
             if (status === 'untested') {
                 // skiplink to first untested criterion
-                html += `<a id="${this.componentSelectorBase}-skiplink">${statusMsg}</a>`;
+                html += `<a id="${this.helpersSelectorBase}-skiplink">${statusMsg}</a>`;
 
                 // skiplink fallback when no untested criteria
-                html += `<span id="${this.componentSelectorBase}-noskiplink">${statusMsg}</span>`;
+                html += `<span id="${this.helpersSelectorBase}-noskiplink">${statusMsg}</span>`;
             } else {
                 html += statusMsg;
             }
@@ -178,22 +196,31 @@ class WcagEmHelpers {
 
         html += '</ul>';
 
-        statsContainer.innerHTML = html;
+        helpersStatsContainer.innerHTML = html;
 
-        wcagEmHelpersContainer.appendChild(statsContainer);
-
-        sc.forEach((scItem, i) => {
-            this.setCriterionIndex(scItem, i + 1, sc.length);
-            this.setCriterionWcagVersion(scItem);
-        });
+        helpersElement.appendChild(helpersStatsContainer);
 
         // can't use regular HTML anchor as Angular uses a hashbang to set virtual page views
-        const skiplink = document.querySelector(`#${this.componentSelectorBase}-skiplink`);
+        const skiplink = document.querySelector(`#${this.helpersSelectorBase}-skiplink`);
         skiplink.addEventListener('click', (e) => {
             e.preventDefault();
             const target = skiplink.getAttribute('href')
             document.querySelector(`${target}`).focus();
         });        
+    }
+    
+    /**
+     * @function enhanceCriteria
+     * @summary Add count and WCAG version to each criterion.
+     * @memberof WcagEmHelpers
+     */
+    enhanceCriteria() {
+        const criteriaElements = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
+
+        criteriaElements.forEach((criteriaElement, i) => {
+            this.setCriterionIndex(criteriaElement, i + 1, criteriaElements.length);
+            this.setCriterionWcagVersion(criteriaElement);
+        });
     }
 
     /**
@@ -225,7 +252,7 @@ class WcagEmHelpers {
         let extraAttrs = '';
         let html = '';
         const sampleCheckboxEls = document.querySelectorAll(this.sampleCheckboxSelector);
-        let wcagEmHelpersContainer = document.querySelector(`.${this.componentSelectorBase}`);
+        let helpersElement = document.querySelector(`.${this.helpersSelectorBase}`);
 
         controls.forEach((control) => {
             // default Angular state is open
@@ -236,46 +263,46 @@ class WcagEmHelpers {
             }
 
             html += `<label class="${this.checkboxLabelClassUnchecked}">`;
-            html += `<input type="checkbox" id="${this.componentSelectorBase}-expand-${control}"${extraAttrs}><span>Expand ${control}</span>`;
+            html += `<input type="checkbox" id="${this.helpersSelectorBase}-expand-${control}"${extraAttrs}><span>Expand ${control}</span>`;
             html += '</label>';
         });
 
         controlsContainer.innerHTML = html;
-        wcagEmHelpersContainer.appendChild(controlsContainer);
+        helpersElement.appendChild(controlsContainer);
 
         // trigger listener to set up element
         sampleCheckboxEls[0].dispatchEvent(new Event('change', { 'bubbles': true }));
 
         controls.forEach((control) => {
-            const controlSelector = wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`);
+            const controlSelector = helpersElement.querySelector(`#${this.helpersSelectorBase}-expand-${control}`);
 
             // add change listener
             controlSelector.addEventListener('change', function () {
 
                 if (this.checked) {
-                    if (this.id === `${_self.componentSelectorBase}-expand-guidelines`) {
+                    if (this.id === `${_self.helpersSelectorBase}-expand-guidelines`) {
                         _self.expandGuidelines(true);
-                        document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).removeAttribute('disabled');
-                        document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).removeAttribute('disabled');
-                    } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
+                        document.querySelector(`#${_self.helpersSelectorBase}-expand-textareas`).removeAttribute('disabled');
+                        document.querySelector(`#${_self.helpersSelectorBase}-expand-samples`).removeAttribute('disabled');
+                    } else if (this.id === `${_self.helpersSelectorBase}-expand-samples`) {
                         _self.expandSampleResults(true);
-                    } else if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
+                    } else if (this.id === `${_self.helpersSelectorBase}-expand-textareas`) {
                         _self.expandTextareas(true);
                     }
                 } else {
-                    if (this.id === `${_self.componentSelectorBase}-expand-guidelines`) {
+                    if (this.id === `${_self.helpersSelectorBase}-expand-guidelines`) {
                         _self.expandGuidelines(false);
-                        document.querySelector(`#${_self.componentSelectorBase}-expand-samples`).setAttribute('disabled', '');
-                        document.querySelector(`#${_self.componentSelectorBase}-expand-textareas`).setAttribute('disabled', '');
-                    } else if (this.id === `${_self.componentSelectorBase}-expand-samples`) {
+                        document.querySelector(`#${_self.helpersSelectorBase}-expand-samples`).setAttribute('disabled', '');
+                        document.querySelector(`#${_self.helpersSelectorBase}-expand-textareas`).setAttribute('disabled', '');
+                    } else if (this.id === `${_self.helpersSelectorBase}-expand-samples`) {
                         _self.expandSampleResults(false);
-                    } else if (this.id === `${_self.componentSelectorBase}-expand-textareas`) {
+                    } else if (this.id === `${_self.helpersSelectorBase}-expand-textareas`) {
                         _self.expandTextareas(false);
                     }
                 }
 
                 controls.forEach((control) => {
-                    const el = document.querySelector(`#${_self.componentSelectorBase}-expand-${control}`);
+                    const el = document.querySelector(`#${_self.helpersSelectorBase}-expand-${control}`);
                     _self.setCheckboxClassname(el);
                 });
             });
@@ -283,7 +310,7 @@ class WcagEmHelpers {
 
         // trigger listener to set up element
         controls.forEach((control) => {
-            wcagEmHelpersContainer.querySelector(`#${this.componentSelectorBase}-expand-${control}`).dispatchEvent(new Event('change', { 'bubbles': true }));
+            helpersElement.querySelector(`#${this.helpersSelectorBase}-expand-${control}`).dispatchEvent(new Event('change', { 'bubbles': true }));
         });
     }
 
@@ -294,8 +321,8 @@ class WcagEmHelpers {
      */
     setSkiplinkTarget() {
         const selects = document.querySelectorAll(`${this.criterionHeadingSelector} select`);
-        const skiplink = document.querySelector(`#${this.componentSelectorBase}-skiplink`);
-        const noskiplink = document.querySelector(`#${this.componentSelectorBase}-noskiplink`);
+        const skiplink = document.querySelector(`#${this.helpersSelectorBase}-skiplink`);
+        const noskiplink = document.querySelector(`#${this.helpersSelectorBase}-noskiplink`);
         let target = null;
 
         for (let s = 0; s < selects.length; s++) {
@@ -327,7 +354,7 @@ class WcagEmHelpers {
      * @param {number} total - Total
      */
     setCriterionIndex(domNode, index, total) {
-        const countSelector = `.${this.componentSelectorBase}__title-count`;
+        const countSelector = `.${this.helpersSelectorBase}__title-count`;
         const parentEl = domNode.querySelector(this.criterionTitleIndexSelector);
 
         if (parentEl !== null) {
@@ -380,11 +407,11 @@ class WcagEmHelpers {
      * @memberof WcagEmHelpers
      */
     hostColoursToVariables() {
-        let stylesheetRef = document.querySelector(`#${this.componentSelectorBase}-variables`);
+        let stylesheetRef = document.querySelector(`#${this.helpersSelectorBase}-variables`);
 
         if (stylesheetRef === null) {
             const stylesheet = document.createElement('style');
-            stylesheet.setAttribute('id', `${this.componentSelectorBase}-variables`);
+            stylesheet.setAttribute('id', `${this.helpersSelectorBase}-variables`);
             document.head.appendChild(stylesheet);
             stylesheetRef = stylesheet.sheet;
 
@@ -400,7 +427,7 @@ class WcagEmHelpers {
                 }
 
                 panel.setAttribute('hidden', '');
-                document.querySelector(`.${this.componentSelectorBase}`).appendChild(panel);
+                document.querySelector(`.${this.helpersSelectorBase}`).appendChild(panel);
 
                 let panelStyles = window.getComputedStyle(panel);
                 let color = panelStyles.getPropertyValue('border-left-color');
@@ -413,24 +440,31 @@ class WcagEmHelpers {
     }
 
     /**
-     * @function setup
-     * @summary Set up the app.
+     * @function enhanceAuditPage
+     * @summary Enhance the audit page with the helpers.
      * @memberof WcagEmHelpers
      */
-    setup() {
+    enhanceAuditPage() {
         // get extension options
         chrome.storage.sync.get(null, (items) => {
             this.showExpandControls = items.showExpandControls;
 
             // timeout allows for Angular render time
             setTimeout(() => {
+                this.criteriaContainerSelector = '[ng-controller="AuditCriteriaCtrl"]';
+                this.helpersElementName = 'fieldset';
+                this.helpersParentSelector = '[ng-controller="AuditCriteriaCtrl"] .sc-filters';
+                this.helpersSiblingSelector = false;
+                this.helpersStatsHeadingSelector = 'p';
+
                 this.generateHelpersContainer();
 
                 if (this.showExpandControls) {
                     this.generateExpandControls();
                 }
 
-                this.generateCriteriaStats();
+                this.scaffoldCriteriaStats();
+                this.enhanceCriteria();
                 this.hostColoursToVariables();
                 this.updateCriteriaStats();
                 this.setSkiplinkTarget();
@@ -440,29 +474,55 @@ class WcagEmHelpers {
     }
 
     /**
+     * @function enhanceReportPage
+     * @summary Enhance the report page with the helpers.
+     * @memberof WcagEmHelpers
+     */
+    enhanceReportPage() {
+        // get extension options
+
+        // timeout allows for Angular render time
+        setTimeout(() => {
+            this.criteriaContainerSelector = '[data-ng-controller="ReportFindingsCtrl"]';
+            this.helpersElementName = 'div';
+            this.helpersParentSelector = false;
+            this.helpersSiblingSelector = '[data-ng-controller="ReportFindingsCtrl"]';
+            this.helpersStatsHeadingSelector = 'h3';
+
+            this.generateHelpersContainer();
+
+            this.scaffoldCriteriaStats();
+            this.enhanceCriteria();
+            this.hostColoursToVariables();
+            this.updateCriteriaStats();
+            this.setSkiplinkTarget();
+        }, 1000);
+    }
+
+    /**
      * @function updateCriteriaStats
      * @summary Update status of Success Criteria pass/fail/todo statistics on page.
      * @memberof WcagEmHelpers
      */
     updateCriteriaStats() {
-        const scContainerElement = document.querySelector(this.criteriaContainerSelector);
-        const sc = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
+        const criteriaContainerElement = document.querySelector(this.criteriaContainerSelector);
+        const criteriaElements = document.querySelectorAll(`${this.criteriaContainerSelector} ${this.criterionSelector}`);
 
         this.statuses.forEach((status) => {
             let count;
 
             if (status === 'total') {
-                count = scContainerElement.querySelectorAll(this.criterionSelector).length;
+                count = criteriaContainerElement.querySelectorAll(this.criterionSelector).length;
             } else {
-                count = scContainerElement.querySelectorAll(`${this.criterionSelector}.${status}`).length;
+                count = criteriaContainerElement.querySelectorAll(`${this.criterionSelector}.${status}`).length;
             }
 
-            document.querySelector(`#${this.componentSelectorBase}__${status}-count`).innerHTML = count;
+            document.querySelector(`#${this.helpersSelectorBase}__${status}-count`).innerHTML = count;
         });
 
-        sc.forEach((scItem, i) => {
-            this.setCriterionIndex(scItem, i + 1, sc.length);
-            this.setCriterionWcagVersion(scItem);
+        criteriaElements.forEach((criteriaElement, i) => {
+            this.setCriterionIndex(criteriaElement, i + 1, criteriaElements.length);
+            this.setCriterionWcagVersion(criteriaElement);
         });
     }
 
@@ -542,12 +602,16 @@ class WcagEmHelpers {
      */
     init() {
         if (document.location.hash === '#!/evaluation/audit') {
-            this.setup();
+            this.enhanceAuditPage();
+        } else if (document.location.hash === '#!/evaluation/report') {
+            this.enhanceReportPage();
         }
 
         window.onpopstate = () => {
             if (document.location.hash === '#!/evaluation/audit') {
-                this.setup();
+                this.enhanceAuditPage();
+            } else if (document.location.hash === '#!/evaluation/report') {
+                this.enhanceReportPage();
             }
         };
     }
@@ -557,9 +621,6 @@ const wcagEmHelpers = new WcagEmHelpers({
     checkboxLabelClassChecked: 'btn btn-sm btn-primary',
     checkboxLabelClassDisabled: 'btn btn-sm btn-primary-invert disabled',
     checkboxLabelClassUnchecked: 'btn btn-sm btn-primary-invert',
-    componentSelectorBase: 'wcag-em-helpers',
-    guidelineCollapseButtonSelector: '.collapse-button[target="g"][aria-expanded="true"]',
-    guidelineExpandButtonSelector: '.collapse-button[target="g"][aria-expanded="false"]',
     criteriaIndicesWcag21: [
         '1.3.4',
         '1.3.5',
@@ -581,15 +642,18 @@ const wcagEmHelpers = new WcagEmHelpers({
     ],
     criterionHeadingSelector: '.criterion > .panel-heading',
     criterionSelector: '.criterion',
-    criterionTitleSelector: '.criterion-title',
     criterionTitleIndexSelector: '.criterion-title > strong',
-    sampleControlContainerSelector: '[ng-controller="AuditSamplePagesCtrl"]',
-    sampleCollapseButtonSelector: '.crit-detail-btn > [aria-expanded="true"]',
-    sampleExpandButtonSelector: '.crit-detail-btn > [aria-expanded="false"]',
+    criterionTitleSelector: '.criterion-title',
+    criterionValueUntested: 'string:earl:untested',
+    guidelineCollapseButtonSelector: '.collapse-button[target="g"][aria-expanded="true"]',
+    guidelineExpandButtonSelector: '.collapse-button[target="g"][aria-expanded="false"]',
+    helpersSelectorBase: 'wcag-em-helpers',
+    helpersStatsHeadingSelector: 'p',
     sampleCheckboxSelector: '[ng-controller="AuditSamplePagesCtrl"] input[type="checkbox"]',
+    sampleCollapseButtonSelector: '.crit-detail-btn > [aria-expanded="true"]',
+    sampleControlContainerSelector: '[ng-controller="AuditSamplePagesCtrl"]',
+    sampleExpandButtonSelector: '.crit-detail-btn > [aria-expanded="false"]',
     sampleSelectionSelector: '.ng-not-empty',
-    criteriaContainerSelector: '[ng-controller="AuditCriteriaCtrl"]',
-    filtersSelector: '.sc-filters',
     statuses: [
         'total',
         'untested',
@@ -598,7 +662,7 @@ const wcagEmHelpers = new WcagEmHelpers({
         'inapplicable',
         'canttell'
     ],
-    criterionValueUntested: 'string:earl:untested'
+    visuallyhiddenSelector: 'sr-only'
 });
 
 wcagEmHelpers.init();

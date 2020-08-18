@@ -4,20 +4,20 @@ Google Chrome extension which (unofficially) supplements the WCAG EM reporting t
 
 ## Features
 
-### Status total counts
+### Status total counts (Audit and Report pages)
 
 * Displays the total count for each of the success criteria statuses (unchecked/passing/failing/inapplicable/other)
 
 ![Screenshot of status total counts](/images/screenshots/status-total-counts.png)
 
-### Success criterion index and WCAG version
+### Success criterion index and WCAG version (Audit and Report pages)
 
 * Numbers each success criterion relative to the active filter(s)
 * Displays the WCAG version for each of the success criterion
 
 ![Screenshot of criterion index and WCAG version](/images/screenshots/criterion-index-and-wcag-version.png)
 
-### Expand all panels / textareas
+### Expand all panels / textareas (Audit pages)
 
 * Expand all guidelines on demand
 * Expand all selected sample results on demand
